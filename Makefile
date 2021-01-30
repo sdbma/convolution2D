@@ -11,9 +11,9 @@ INCLUDE=./include
 MKDIR_P = mkdir -p
 PYTESTS=./pytests
 
-all: $(BINDIR) $(BINDIR)/testConv2D
+all: $(BINDIR) $(BINDIR)/unittest
 
-$(BINDIR)/testConv2D: $(BUILDDIR)/Convolution2D.o $(BUILDDIR)/UnitTest.o $(BUILDDIR)/test.o
+$(BINDIR)/unittest: $(BUILDDIR)/Convolution2D.o $(BUILDDIR)/UnitTest.o $(BUILDDIR)/test.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(BUILDDIR)/%.o: $(SRC)/%.cpp 
@@ -38,8 +38,8 @@ $(BINDIR):
 clean:
 	rm -rf $(BUILDDIR)/* $(BINDIR)/*
 
-run: $(BINDIR)/testConv2D
-	$(BINDIR)/testConv2D -f tests/tests.all
+run: $(BINDIR)/unittest
+	$(BINDIR)/unittest -f tests/tests.all
 
 pytest: $(PYTESTS)/pytest
 	cd $(PYTESTS); ./pytest all ; cd ..
