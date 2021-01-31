@@ -1,35 +1,42 @@
-# Convolution2D
+# Implementation of Convolution2D in C++
 ---
 
-### Overview
-This document is organized under the following headers.
+## Overview
+Convolution has become an integral part of neural networks[[Convolution Neural Network]][wiki]. Image and video recognition, Natural Language Processing are some of the applications that use convolution. It is imperative that the convolution has to be as fast as possible.
 
-1. Directory Structure
-2. How to Run Unit Tests
-3. How to Run Python Embedded Tests
-4. Executables
-5. Implementation
+The blog ['How are Convolutions Actually Performed Under The Hood?'][medium] explains the need for a fast convolution operator. The layers associated with convolution can take upto 90% of the execution time, and thus it is important for the convolution to be fast.
+
+The blog above explains 2 tricks that PyTorch and TensorFlow use to make convolution significantly faster. The first trick is using im2col operation and second is memory striding
+
+There are two implementations in the repository. 
+1. Naive implementation
+2. Fast convolution
+
+The performance difference between the two can be visualized in the [blog][medium].
+
+The emphasis of this repository was to only show the difference between naive and fast convolution. So, a number of assumptions have been made in order to not stray away from the point. The convolutions are on square image and square filters, same output mode and have stride and dilation value of 1. Other matrix multiplication methods, e.g. kn2row can also be explored in the future.
+
+### Implementation
+##### Naive Convolution
+Naive convolution is easy to understand, we simply traverse the 2D input matrix and pull out "windows"the size of kernel. For each window, we do "matrix-multiplication" using a separate matrix-multiplication function. The matrix multiplication can be made efficient by moving column less frequently because column addresses are not contiguous. The code in the implementation achieves that by moving the columns only after full iteration of dot product.
+
+##### Fast Convolution
+In the naive implementation, we did matrix-multiply the kernel with each window of the input matrix. In contrast, the fast convolution uses im2col to vectorize the entire operation. The im2col is a technique where we take each window, flatten it out and stack them as columns in a matrix. Now, matrix multiplication is done on the flattened matrix and flattened kernel.
+
+### Verification
+There are many ways to do verification of the convolution, e.g. using C++ libraries like opencv2. However, the repository took the approach of importing embedded python module scipy2 and comparing the implementation results with signal.convolve2d method. The python module scipy is an ecosystem, a collection of open source software for scientific computing.
 
 ## Directory Structure
 The directory structure for this project is as follows:
 
 1. include/
-   > contains the include files:  
-   > **Convolution2D.hpp**  
-   > **EmbeddedPythonTest.hpp**  
-   > **UnitTest.hpp**  
+   > contains the source and test include files 
 2. src/
-   > contains the implementation of convolution2D:   
-   > ** Convolution2D.cpp**   
+   > contains the implementation of convolution2D
 3. tests/
-   > contains unit test source code and test files:   
-   > **UnitTest.cpp**   
-   > **test\*.txt**   
-   > **tests.all** - runs tests for all test\*.txt   
+   > contains unit test source code and unit test gold files
 4. pytests/
-   > execute embedded python code for verification:   
-   > **EmbeddedPythonTest.cpp**   
-   > **pytest.cpp** - contains main for running embed python tests   
+   > execute embedded python code for verification
 
 This directory contains a Makefile and a README.   
 
@@ -39,27 +46,6 @@ In order to build the source code and run unit tests, run the following commands
 ```sh
 $ make
 $ make run
-```   
-A successful verification will show the following text in console.   
-```sh
-$ make run
-./bin/testConv2D -f tests/tests.all
- NAIVE CONV2D PASS: (7,3) tests/test1.txt
-  FAST CONV2D PASS: (7,3) tests/test1.txt
- NAIVE CONV2D PASS: (7,1) tests/test2.txt
-  FAST CONV2D PASS: (7,1) tests/test2.txt
- NAIVE CONV2D PASS: (7,5) tests/test3.txt
-  FAST CONV2D PASS: (7,5) tests/test3.txt
- NAIVE CONV2D PASS: (7,7) tests/test4.txt
-  FAST CONV2D PASS: (7,7) tests/test4.txt
- NAIVE CONV2D PASS: (7,9) tests/test5.txt
-  FAST CONV2D PASS: (7,9) tests/test5.txt
- NAIVE CONV2D PASS: (64,11) tests/test6.txt
-  FAST CONV2D PASS: (64,11) tests/test6.txt
- NAIVE CONV2D PASS: (16,11) tests/test7.txt
-  FAST CONV2D PASS: (16,11) tests/test7.txt
- NAIVE CONV2D PASS: (32,9) tests/test8.txt
-  FAST CONV2D PASS: (32,9) tests/test8.txt
 ```
 
 ## How to run Python Embedded Tests
@@ -69,63 +55,27 @@ In order to verify the authored code with embedded python library scipy.signal m
 $ make pytest
 ```
 
-A successful verification will have the following text in console.   
-```sh
-$ make pytest
-cd ./pytests; ./pytest all ; cd ..
-
-Comparing C++ conv() impl with python Scipy method.
----------------------------------------------------
-
-Testing random images and filter
-
-(ImageSize,FilterSize) = (7,3)
-  NAIVE CONV PASSED.
-   FAST CONV PASSED.
-(ImageSize,FilterSize) = (7,5)
-  NAIVE CONV PASSED.
-   FAST CONV PASSED.
-(ImageSize,FilterSize) = (7,1)
-  NAIVE CONV PASSED.
-   FAST CONV PASSED.
-(ImageSize,FilterSize) = (7,7)
-  NAIVE CONV PASSED.
-   FAST CONV PASSED.
-(ImageSize,FilterSize) = (16,7)
-  NAIVE CONV PASSED.
-   FAST CONV PASSED.
-(ImageSize,FilterSize) = (32,11)
-  NAIVE CONV PASSED.
-   FAST CONV PASSED.
-(ImageSize,FilterSize) = (64,11)
-  NAIVE CONV PASSED.
-   FAST CONV PASSED.
-(ImageSize,FilterSize) = (55,9)
-  NAIVE CONV PASSED.
-   FAST CONV PASSED.
-```
 Please see the Makefile for instructions on how to get the required python configuration for C++ compilation, if the above make command has compilation issues.
 
 ## Executables
 Two executables are created:   
 
-* bin/testConv2D   
+* bin/unittest   
 * pytests/pytest   
 
 #### bin/testConv2D
-Running just the command will print instructions on how to run it.    
-
+Running just the command will print instructions on how to run it. 
 * For running all the unit tests:   
 ```sh
-$ bin/testConv2D -f tests/test.all
+$ bin/unittest -f tests/test.all
 ```
 * For running one unit test:   
 ```sh
-$ bin/testConv2D tests/test1.txt   
+$ bin/unittest tests/test1.txt   
 ```
 * For creating random image and running 2D convolution on it.   
 ```sh
-$ bin/testConv2D -rand 7 3
+$ bin/unittest -rand 7 3
 ```
 #### pytests/pytest
 This executable is specially created to verify the C++ authored conv2D implementation with python scipy.signal module convolve2d() method.    
@@ -169,39 +119,17 @@ class **EmbeddedPythonTest** has the following methods:
  | static runRandomConv2D(sizes) | Creates random image and and filter and run 2D conv and prints the contents
 
 
-##### Files containing main method()
-
-###### **pytests/pytest.cpp**   
-
-This always compares C++ authored implementation (both naive and fast) output results with python module scipy.signal convolve2d() results. 
-
-The following command creates random images for list of various sizes and verifies the C++ authored implementation.   
-```sh
-$ cd pytests; ./pytests all; cd ..
-```
-
-The following command creates random images for selected image and filter size and verifies the authored implementation for those sizes.   
-```sh
-$ cd pytests; ./pytest 4 3; cd ..
-```
-   
-###### **tests/test.cpp**
-  
-This compares with pre-selected unit test files, viz. tests/text\*.txt. The txt files have data for input image, filter and output image. This routine will pass input image and filter data to C++ authored implementation (both naive and fast) and compare the output received with test file output image data.    
-
-To run all tests listed in tests/tests.all, use the following command:   
-```sh
-$ bin/testConv2D -f tests/tests.all
-```
-
-To run only one test.   
-```sh
-$ bin/testConv2D tests/test1.txt
-```
-
-The following command creates random image and filter with a specific size, and generates convolvedImage for both naive and fast method - compares them with each other, and prints them all.   
-```sh
-$ bin/testConv2D -rand <imageSize> <filterSize>
-```
- 
 Please contact [Shomit Dutta](mailto:shomitdutta@gmail.com) for follow-up questions. 
+
+
+License
+----
+
+GNU General Public Licence
+
+
+[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
+
+   [wiki]: <https://en.wikipedia.org/wiki/Convolutional_neural_network#Convolutional_layers>
+   [medium]: <https://towardsdatascience.com/how-are-convolutions-actually-performed-under-the-hood-226523ce7fbf>
+
