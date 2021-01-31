@@ -12,8 +12,7 @@ There are two implementations in the repository.
 1. Naive implementation
 2. Fast convolution
 
-The performance difference between the two can be visualized as below:
-![alt text](Isolated.png "Title")
+The performance difference between the two can be visualized in the [blog][medium].
 
 The emphasis of this repository was to only show the difference between naive and fast convolution. So, a number of assumptions have been made in order to not stray away from the point. The convolutions are on square image and square filters, same output mode and have stride and dilation value of 1. Other matrix multiplication methods, e.g. kn2row can also be explored in the future.
 
@@ -22,7 +21,7 @@ The emphasis of this repository was to only show the difference between naive an
 Naive convolution is easy to understand, we simply traverse the 2D input matrix and pull out "windows"the size of kernel. For each window, we do "matrix-multiplication" using a separate matrix-multiplication function. The matrix multiplication can be made efficient by moving column less frequently because column addresses are not contiguous. The code in the implementation achieves that by moving the columns only after full iteration of dot product.
 
 ##### Fast Convolution
-In the naive implementation, we did matrix-multiply the kernel with each window of the input matrix. In contrast, the fast convolution uses im2col to vectorize the entire operation. The im2col is a technique where we take each window, flatten it out and stack them as columns in a matrix. Now, matrix multiplication is done on the flattened matrix and flattened kernel. This is much faster than naive implementation as can be seen in the performance graph above.
+In the naive implementation, we did matrix-multiply the kernel with each window of the input matrix. In contrast, the fast convolution uses im2col to vectorize the entire operation. The im2col is a technique where we take each window, flatten it out and stack them as columns in a matrix. Now, matrix multiplication is done on the flattened matrix and flattened kernel.
 
 ### Verification
 There are many ways to do verification of the convolution, e.g. using C++ libraries like opencv2. However, the repository took the approach of importing embedded python module scipy2 and comparing the implementation results with signal.convolve2d method. The python module scipy is an ecosystem, a collection of open source software for scientific computing.
