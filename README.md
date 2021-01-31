@@ -1,6 +1,4 @@
 # Implementation of Convolution2D in C++
----
-
 ## Overview
 Convolution has become an integral part of neural networks[[Convolution Neural Network]][wiki]. Image and video recognition, Natural Language Processing are some of the applications that use convolution. It is imperative that the convolution has to be as fast as possible.
 
