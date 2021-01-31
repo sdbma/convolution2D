@@ -11,9 +11,9 @@ using namespace std;
 static
 void printArgs() {
     cout << "Pass test file or test file list using -f option" << endl;
-    cout << "$ testConv2D <test1.txt>" << endl;
-    cout << "$ testConv2D -f <test1.list>" << endl;
-    cout << "$ testConv2D -rand <imgSize> <filterSize>" << endl;
+    cout << "$ unittest <test1.txt>" << endl;
+    cout << "$ unittest -f <test1.list>" << endl;
+    cout << "$ unittest -rand <imgSize> <filterSize>" << endl;
 }
 
 int main(int argc, char* argv[]) {
