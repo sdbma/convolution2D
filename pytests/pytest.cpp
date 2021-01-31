@@ -1,4 +1,19 @@
 #define PY_SSIZE_T_CLEAN
+/*
+ * This file is part of the github distribution (https://github.com/sdbma).
+ * Copyright (c) 2021 Shomit Dutta.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License <http://www.gnu.org/licenses/> for more details.
+ *
+ * main() method for testing using Python embedded code.
+ */
 #include "EmbeddedPythonTest.hpp"
 #include <stdexcept>
 #include <iostream>
