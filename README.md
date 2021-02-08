@@ -126,7 +126,7 @@ License
 GNU General Public Licence
 
 
-[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
+[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job.
 
    [wiki]: <https://en.wikipedia.org/wiki/Convolutional_neural_network#Convolutional_layers>
    [medium]: <https://towardsdatascience.com/how-are-convolutions-actually-performed-under-the-hood-226523ce7fbf>
